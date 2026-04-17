@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KPIs Tutores — Marzo 2026 vs Marzo 2025</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f5f5f3;
+    --bg-tertiary: #eeede9;
+    --text-primary: #1a1a18;
+    --text-secondary: #6b6b67;
+    --border: rgba(0,0,0,0.12);
+    --border-md: rgba(0,0,0,0.22);
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --up: #0F6E56;
+    --down: #A32D2D;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg-primary: #1e1e1c;
+      --bg-secondary: #2a2a27;
+      --bg-tertiary: #333330;
+      --text-primary: #f0efea;
+      --text-secondary: #9b9b96;
+      --border: rgba(255,255,255,0.1);
+      --border-md: rgba(255,255,255,0.2);
+    }
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg-tertiary); color: var(--text-primary); min-height: 100vh; }
+  .page { max-width: 960px; margin: 0 auto; padding: 2rem 1rem; }
+  .header { margin-bottom: 1.5rem; }
+  .header h1 { font-size: 22px; font-weight: 500; color: var(--text-primary); margin-bottom: 4px; }
+  .header p { font-size: 13px; color: var(--text-secondary); }
+  .nav { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1.5rem; border-bottom: 0.5px solid var(--border); padding-bottom: 1rem; }
+  .nav-btn { font-size: 12px; font-weight: 500; padding: 6px 14px; border: 0.5px solid var(--border-md); border-radius: var(--radius-md); cursor: pointer; background: transparent; color: var(--text-secondary); transition: all .15s; }
+  .nav-btn:hover { background: var(--bg-secondary); }
+  .nav-btn.active { background: var(--bg-secondary); color: var(--text-primary); border-color: var(--border-md); }
+  .section { display: none; }
+  .section.visible { display: block; }
+  .sec-label { font-size: 11px; font-weight: 500; color: var(--text-secondary); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 10px; }
+  .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; margin-bottom: 1.25rem; }
+  .mcard { background: var(--bg-secondary); border-radius: var(--radius-md); padding: .75rem 1rem; }
+  .mcard .lbl { font-size: 11px; color: var(--text-secondary); margin-bottom: 4px; line-height: 1.3; }
+  .mcard .val { font-size: 20px; font-weight: 500; color: var(--text-primary); line-height: 1.2; }
+  .mcard .yoy { font-size: 12px; font-weight: 500; margin-top: 5px; display: flex; align-items: center; gap: 4px; }
+  .up { color: var(--up); }
+  .down { color: var(--down); }
+  .flat { color: var(--text-secondary); }
+  .arrow-up::before { content: "▲"; font-size: 9px; }
+  .arrow-down::before { content: "▼"; font-size: 9px; }
+  .divider { border: none; border-top: 0.5px solid var(--border); margin: 1.25rem 0; }
+  .chart-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-top: 1rem; }
+  .chart-box { background: var(--bg-primary); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 1rem; }
+  .chart-box .ch-title { font-size: 12px; color: var(--text-secondary); margin-bottom: 10px; }
+  .bar-group { margin-bottom: 10px; }
+  .bar-label { font-size: 11px; color: var(--text-secondary); margin-bottom: 3px; display: flex; justify-content: space-between; }
+  .bar-track { height: 8px; background: var(--bg-tertiary); border-radius: 4px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; transition: width .4s ease; }
+  .bar-25 { background: #85B7EB; }
+  .bar-26 { background: #378ADD; }
+  .legend-row { display: flex; gap: 14px; margin-bottom: 10px; font-size: 11px; color: var(--text-secondary); }
+  .legend-row span { display: flex; align-items: center; gap: 4px; }
+  .leg-dot { width: 10px; height: 10px; border-radius: 2px; }
+  .footer { margin-top: 2.5rem; font-size: 11px; color: var(--text-secondary); text-align: center; border-top: 0.5px solid var(--border); padding-top: 1rem; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <h1>KPIs tutores</h1>
+    <p>Marzo 2026 vs marzo 2025</p>
+  </div>
+
+  <div class="nav">
+    <button class="nav-btn active" onclick="showSection('global',this)">Resumen global</button>
+    <button class="nav-btn" onclick="showSection('ad',this)">Anuncio (AD)</button>
+    <button class="nav-btn" onclick="showSection('pdc',this)">PDC</button>
+    <button class="nav-btn" onclick="showSection('cac',this)">CAC &amp; Marketing</button>
+  </div>
+
+  <!-- GLOBAL -->
+  <div id="sec-global" class="section visible">
+    <div class="sec-label">Resumen global tutores</div>
+    <div class="cards-grid">
+      <div class="mcard"><div class="lbl">Net revenues</div><div class="val">70.851€</div><div class="yoy up"><span class="arrow-up"></span>+1,3% vs mar-25</div></div>
+      <div class="mcard"><div class="lbl">Paying tutors EB</div><div class="val">5.587</div><div class="yoy down"><span class="arrow-down"></span>-2,1% vs mar-25</div></div>
+      <div class="mcard"><div class="lbl">Gross adds</div><div class="val">2.517</div><div class="yoy up"><span class="arrow-up"></span>+0,6% vs mar-25</div></div>
+      <div class="mcard"><div class="lbl">G.Adds 1ª vez</div><div class="val">1.363</div><div class="yoy up"><span class="arrow-up"></span>+10,6% vs mar-25</div></div>
+      <div class="mcard"><div class="lbl">G.Adds revividos</div><div class="val">1.154</div><div class="yoy down"><span class="arrow-down"></span>-9,1% vs mar-25</div></div>
+      <div class="mcard"><div class="lbl">Churn tutores</div><div class="val">2.673</div><div class="yoy flat">0,0% vs mar-25</div></div>
+      <div class="mcard"><div class="lbl">Churn%</div><div class="val">46,5%</div><div class="yoy down"><span class="arrow-down"></span>+1,0pp vs mar-25</div></div>
+      <div class="mcard"><div class="lbl">Active tutors MAU</div><div class="val">106.553</div><div class="yoy up"><span class="arrow-up"></span>+2,5% vs mar-25</div></div>
+    </div>
+    <hr class="divider">
+    <div class="chart-row">
+      <div class="chart-box">
+        <div class="ch-title">Composición gross adds (mar-25 vs mar-26)</div>
+        <div class="legend-row">
+          <span><span class="leg-dot" style="background:#85B7EB"></span>Mar-25</span>
+          <span><span class="leg-dot" style="background:#378ADD"></span>Mar-26</span>
+        </div>
+        <div id="bars-global"></div>
+      </div>
+      <div class="chart-box">
+        <div class="ch-title">Net revenues mensual (€)</div>
+        <div style="position:relative;width:100%;height:160px">
+          <canvas id="c-rev" role="img" aria-label="Net revenues mensual tutores 2025-2026">Net revenues tutores mensuales.</canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AD -->
+  <div id="sec-ad" class="section">
+    <div class="sec-label">Anuncio (AD)</div>
+    <div class="cards-grid">
+      <div class="mcard"><div class="lbl">Gross Adds AD</div><div class="val">515</div><div class="yoy up"><span class="arrow-up"></span>+25,9% vs mar-25</div></div>
+      <div class="mcard"><div class="lbl">G.Adds 1ª vez AD</div><div class="val">506</div><div class="yoy up"><span class="arrow-up"></span>+28,1% vs mar-25</div></div>
+      <div class="mcard"><div class="lbl">G.Adds revividos AD</div><div class="val">9</div><div class="yoy down"><span class="arrow-down"></span>-35,7% vs mar-25</div></div>
+      <div class="mcard"><div class="lbl">Renewals AD</div><div class="val">2.363</div><div class="yoy up"><span class="arrow-up"></span>+0,6% vs mar-25</div></div>
+      <div class="mcard"><div class="lbl">EB AD</div><div class="val">2.929</div><div class="yoy up"><span class="arrow-up"></span>+0,6% vs mar-25</div></div>
+      <div class="mcard"><div class="lbl">Churn AD</div><div class="val">702</div><div class="yoy down"><span class="arrow-down"></span>+24,5% vs mar-25</div></div>
+    </div>
+    <hr class="divider">
+    <div class="chart-row">
+      <div class="chart-box">
+        <div class="ch-title">Distribución compras AD — mar-26</div>
+        <div style="position:relative;width:100%;height:180px">
+          <canvas id="c-ad-pie" role="img" aria-label="Distribución compras AD marzo 2026">Renewals 2363, G.Adds 1a vez 506, revividos 9.</canvas>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;font-size:11px;color:var(--text-secondary)">
+          <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#378ADD"></span>Renewals 82,1%</span>
+          <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#1D9E75"></span>1ª vez 17,6%</span>
+          <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#D85A30"></span>Revividos 0,3%</span>
+        </div>
+      </div>
+      <div class="chart-box">
+        <div class="ch-title">Comparativa mar-25 vs mar-26 (AD)</div>
+        <div id="bars-ad"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PDC -->
+  <div id="sec-pdc" class="section">
+    <div class="sec-label">PDC (perfil destacado)</div>
+    <div class="cards-grid">
+      <div class="mcard"><div class="lbl">Gross Adds PDC</div><div class="val">1.481</div><div class="yoy up"><span class="arrow-up"></span>+18,5% vs mar-25</div></div>
+      <div class="mcard"><div class="lbl">G.Adds 1ª vez PDC</div><div class="val">1.218</div><div class="yoy up"><span class="arrow-up"></span>+16,7% vs mar-25</div></div>
+      <div class="mcard"><div class="lbl">G.Adds revividos PDC</div><div class="val">263</div><div class="yoy up"><span class="arrow-up"></span>+27,7% vs mar-25</div></div>
+      <div class="mcard"><div class="lbl">Renewals PDC</div><div class="val">1.034</div><div class="yoy down"><span class="arrow-down"></span>-14,3% vs mar-25</div></div>
+      <div class="mcard"><div class="lbl">EB PDC</div><div class="val">26.821</div><div class="yoy down"><span class="arrow-down"></span>-24,8% vs mar-25</div></div>
+    </div>
+    <hr class="divider">
+    <div class="chart-row">
+      <div class="chart-box">
+        <div class="ch-title">Distribución compras PDC — mar-26</div>
+        <div style="position:relative;width:100%;height:180px">
+          <canvas id="c-pdc-pie" role="img" aria-label="Distribución compras PDC marzo 2026">Renewals 1034, G.Adds 1a vez 1218, revividos 263.</canvas>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;font-size:11px;color:var(--text-secondary)">
+          <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#378ADD"></span>Renewals 41,0%</span>
+          <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#1D9E75"></span>1ª vez 48,3%</span>
+          <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#D85A30"></span>Revividos 10,4%</span>
+        </div>
+      </div>
+      <div class="chart-box">
+        <div class="ch-title">Comparativa mar-25 vs mar-26 (PDC)</div>
+        <div id="bars-pdc"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CAC -->
+  <div id="sec-cac" class="section">
+    <div class="sec-label">CAC &amp; Inversión marketing</div>
+    <div class="cards-grid">
+      <div class="mcard"><div class="lbl">CPA tutores</div><div class="val">1,60€</div><div class="yoy up"><span class="arrow-up"></span>-19,2% vs mar-25</div></div>
+      <div class="mcard"><div class="lbl">CAC tutores</div><div class="val">8,20€</div><div class="yoy up"><span class="arrow-up"></span>-34,6% vs mar-25</div></div>
+      <div class="mcard"><div class="lbl">Blended CAC</div><div class="val">3,86€</div><div class="yoy up"><span class="arrow-up"></span>-46,0% vs mar-25</div></div>
+      <div class="mcard"><div class="lbl">Spend G.Ads</div><div class="val">1.494€</div><div class="yoy down"><span class="arrow-down"></span>-77,6% vs mar-25</div></div>
+      <div class="mcard"><div class="lbl">Spend Other Acq</div><div class="val">18.473€</div><div class="yoy flat">-2,1% vs mar-25</div></div>
+      <div class="mcard"><div class="lbl">New Mktg Complete Tutors Paid</div><div class="val">12.516</div><div class="yoy down"><span class="arrow-down"></span>-2,8% vs mar-25</div></div>
+      <div class="mcard"><div class="lbl">New Mktg Paid Complete Tutors</div><div class="val">5.176</div><div class="yoy up"><span class="arrow-up"></span>+44,9% vs mar-25</div></div>
+      <div class="mcard"><div class="lbl">New Mktg Paid Tutors Paid</div><div class="val">2.436</div><div class="yoy up"><span class="arrow-up"></span>+19,6% vs mar-25</div></div>
+    </div>
+    <hr class="divider">
+    <div class="chart-row">
+      <div class="chart-box">
+        <div class="ch-title">CAC vs Blended CAC — últimos 12 meses (€)</div>
+        <div style="display:flex;gap:14px;margin-bottom:8px;font-size:11px;color:var(--text-secondary)">
+          <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#378ADD"></span>CAC</span>
+          <span style="display:flex;align-items:center;gap:6px"><span style="width:16px;border-top:2px dashed #1D9E75;display:inline-block"></span>Blended CAC</span>
+        </div>
+        <div style="position:relative;width:100%;height:180px">
+          <canvas id="c-cac" role="img" aria-label="Evolución CAC y Blended CAC tutores últimos 12 meses">CAC baja de 17€ a 8€, Blended CAC de 9€ a 4€.</canvas>
+        </div>
+      </div>
+      <div class="chart-box">
+        <div class="ch-title">Inversión marketing tutores (€)</div>
+        <div class="legend-row">
+          <span><span class="leg-dot" style="background:#85B7EB"></span>Mar-25</span>
+          <span><span class="leg-dot" style="background:#378ADD"></span>Mar-26</span>
+        </div>
+        <div id="bars-mkt"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">Generado con datos internos TUS Media · Marzo 2026</div>
+</div>
+
+<script>
+function showSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('visible'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('visible');
+  btn.classList.add('active');
+  if (!window.chartsBuilt) window.chartsBuilt = {};
+  if (!window.chartsBuilt[id]) { window.chartsBuilt[id] = true; buildCharts(id); }
+}
+
+const isDark = matchMedia('(prefers-color-scheme: dark)').matches;
+const tc = isDark ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.35)';
+const gc = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
+const baseOpts = {
+  responsive: true, maintainAspectRatio: false,
+  plugins: { legend: { display: false } },
+  scales: {
+    x: { ticks: { color: tc, font: { size: 10 } }, grid: { color: gc } },
+    y: { ticks: { color: tc, font: { size: 10 } }, grid: { color: gc } }
+  }
+};
+
+function makeBars(containerId, items) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const max = Math.max(...items.map(i => Math.max(i.v25, i.v26)));
+  el.innerHTML = items.map(item => {
+    const w25 = (item.v25 / max * 100).toFixed(1);
+    const w26 = (item.v26 / max * 100).toFixed(1);
+    const yoy = ((item.v26 - item.v25) / item.v25 * 100).toFixed(1);
+    const yc = parseFloat(yoy) > 0 ? '#0F6E56' : parseFloat(yoy) < 0 ? '#A32D2D' : 'var(--text-secondary)';
+    return `<div class="bar-group">
+      <div class="bar-label"><span>${item.label}</span><span style="color:${yc};font-weight:500">${parseFloat(yoy) > 0 ? '+' : ''}${yoy}%</span></div>
+      <div style="margin-bottom:3px"><div class="bar-track"><div class="bar-fill bar-25" style="width:${w25}%"></div></div></div>
+      <div><div class="bar-track"><div class="bar-fill bar-26" style="width:${w26}%"></div></div></div>
+    </div>`;
+  }).join('');
+}
+
+function buildCharts(id) {
+  if (id === 'global') {
+    makeBars('bars-global', [
+      { label: 'G.Adds 1ª vez', v25: 1232, v26: 1363 },
+      { label: 'G.Adds revividos', v25: 1269, v26: 1154 },
+      { label: 'Churn', v25: 2673, v26: 2673 },
+    ]);
+    new Chart(document.getElementById('c-rev'), {
+      type: 'bar',
+      data: {
+        labels: ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic','Ene','Feb','Mar'],
+        datasets: [{
+          label: 'Net revenues',
+          data: [84830,72680,69935,60697,65963,64311,59405,73184,106970,84024,77079,61892,81595,72864,70851],
+          backgroundColor: Array(12).fill('#B5D4F4').concat(Array(3).fill('#378ADD')),
+          borderRadius: 3
+        }]
+      },
+      options: { ...baseOpts, scales: { ...baseOpts.scales, y: { ...baseOpts.scales.y, ticks: { ...baseOpts.scales.y.ticks, callback: v => (v / 1000).toFixed(0) + 'K' } } } }
+    });
+  }
+  if (id === 'ad') {
+    new Chart(document.getElementById('c-ad-pie'), {
+      type: 'doughnut',
+      data: { labels: ['Renewals', '1ª vez', 'Revividos'], datasets: [{ data: [2363, 506, 9], backgroundColor: ['#378ADD', '#1D9E75', '#D85A30'], borderWidth: 0 }] },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, cutout: '65%' }
+    });
+    makeBars('bars-ad', [
+      { label: 'Gross Adds', v25: 409, v26: 515 },
+      { label: 'G.Adds 1ª vez', v25: 395, v26: 506 },
+      { label: 'Renewals', v25: 2350, v26: 2363 },
+      { label: 'Churn', v25: 564, v26: 702 },
+      { label: 'EB', v25: 2912, v26: 2929 },
+    ]);
+  }
+  if (id === 'pdc') {
+    new Chart(document.getElementById('c-pdc-pie'), {
+      type: 'doughnut',
+      data: { labels: ['Renewals', '1ª vez', 'Revividos'], datasets: [{ data: [1034, 1218, 263], backgroundColor: ['#378ADD', '#1D9E75', '#D85A30'], borderWidth: 0 }] },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, cutout: '65%' }
+    });
+    makeBars('bars-pdc', [
+      { label: 'Gross Adds', v25: 1250, v26: 1481 },
+      { label: 'G.Adds 1ª vez', v25: 1044, v26: 1218 },
+      { label: 'G.Adds revividos', v25: 206, v26: 263 },
+      { label: 'Renewals', v25: 1207, v26: 1034 },
+      { label: 'EB', v25: 35663, v26: 26821 },
+    ]);
+  }
+  if (id === 'cac') {
+    new Chart(document.getElementById('c-cac'), {
+      type: 'line',
+      data: {
+        labels: ['Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic','Ene','Feb','Mar'],
+        datasets: [
+          { label: 'CAC', data: [14.55,13.32,9.48,11.08,9.10,6.67,5.87,5.59,7.27,6.82,9.59,8.20], borderColor: '#378ADD', backgroundColor: 'transparent', pointRadius: 3, tension: .3 },
+          { label: 'Blended CAC', data: [8.26,7.53,5.35,6.23,4.97,3.52,3.13,2.51,3.32,3.09,4.42,3.86], borderColor: '#1D9E75', backgroundColor: 'transparent', pointRadius: 3, tension: .3, borderDash: [5, 3] }
+        ]
+      },
+      options: { ...baseOpts, scales: { ...baseOpts.scales, y: { ...baseOpts.scales.y, ticks: { ...baseOpts.scales.y.ticks, callback: v => v.toFixed(0) + '€' } } } }
+    });
+    makeBars('bars-mkt', [
+      { label: 'Spend G.Ads', v25: 6667, v26: 1494 },
+      { label: 'Spend Other Acq', v25: 18866, v26: 18473 },
+    ]);
+  }
+}
+
+window.addEventListener('load', () => {
+  window.chartsBuilt = { global: true };
+  buildCharts('global');
+});
+</script>
+</body>
+</html>
