@@ -1220,12 +1220,12 @@ function renderMarket(m){
          pointRadius:d.cac.map((_,i)=>i===ci?7:2),
          pointBackgroundColor:d.cac.map((_,i)=>i===ci?'#E24B4A':'#378ADD'),
          datalabels:{display:ctx=>showAll||ctx.dataIndex===ci,anchor:'end',align:'top',
-           color:'#378ADD',font:{size:11,weight:'bold'},formatter:v=>v!=null?Math.round(v)+'€':''}},
+           color:'#378ADD',font:{size:11,weight:'bold'},formatter:v=>v!=null?v.toFixed(1)+'€':''}},
         {label:'Blended',data:d.blend,borderColor:'#1D9E75',backgroundColor:'transparent',tension:.3,borderDash:[5,3],
          pointRadius:d.blend.map((_,i)=>i===ci?7:2),
          pointBackgroundColor:d.blend.map((_,i)=>i===ci?'#E24B4A':'#1D9E75'),
          datalabels:{display:ctx=>showAll||ctx.dataIndex===ci,anchor:'end',align:'bottom',
-           color:'#1D9E75',font:{size:11,weight:'bold'},formatter:v=>v!=null?Math.round(v)+'€':''}}
+           color:'#1D9E75',font:{size:11,weight:'bold'},formatter:v=>v!=null?v.toFixed(1)+'€':''}}
       ]},
       options:{...bOpts,layout:{padding:{top:26,bottom:16}},
         plugins:{legend:{display:false},datalabels:{}},
