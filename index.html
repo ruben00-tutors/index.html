@@ -1031,9 +1031,10 @@ function applyFilter(){
   if(idx<0){alert('Mes no disponible en los datos.');return;}
   CUR_IDX=idx;
   const cur=ALL_MONTHS[idx];
-  const py=ALL_MONTHS[getPyIdx(idx)];
-  document.getElementById('period-badge').textContent=`${cur.label} vs ${py.label}`;
-  document.getElementById('header-sub').textContent=`${cur.label} vs ${py.label} (YoY)`;
+  const pyMonthNames=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const pyLbl=pyMonthNames[cur.m]+'-'+((cur.y-1).toString().slice(2));
+  document.getElementById('period-badge').textContent=`${cur.label} vs ${pyLbl}`;
+  document.getElementById('header-sub').textContent=`${cur.label} vs ${pyLbl} (YoY)`;
   MKTS.forEach(m=>renderMarket(m));
 }
 
@@ -1123,12 +1124,13 @@ function makePie(cid,lid,ren,ga){
 function renderMarket(m){
   const d=RAW[m];
   const ci=CUR_IDX;
-  const pi=getPyIdx(ci);
   const curLbl=ALL_MONTHS[ci].label;
-  const pyLbl=ALL_MONTHS[pi].label;
+  const pyYear=ALL_MONTHS[ci].y-1;
+  const pyMonthNames=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const pyLbl=pyMonthNames[ALL_MONTHS[ci].m]+'-'+(pyYear.toString().slice(2));
 
   const g=k=>gv(d[k],ci);
-  const p=k=>gv(d[k],pi);
+  const p=k=>gv(d[k+'_py'],ci);
 
   // ── GLOBAL ──────────────────────────────────────────────────────────────────
   document.getElementById(m+'-global-label').textContent=`Resumen global — ${m.toUpperCase()} · ${curLbl} vs ${pyLbl}`;
