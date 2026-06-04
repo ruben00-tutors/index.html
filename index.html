@@ -234,7 +234,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <div class="gloss-item"><div class="gloss-term">CAC</div><div class="gloss-def">Customer Acquisition Cost: gasto pagado / tutores de primera vez provenientes de marketing pagado.</div></div>
         <div class="gloss-item"><div class="gloss-term">Blended CAC</div><div class="gloss-def">CAC combinado orgánico + pagado: gasto total / todos los G.Adds 1ª vez del mes.</div></div>
         <div class="gloss-item"><div class="gloss-term">Spend G.Ads / Other Acq</div><div class="gloss-def">Inversión en Google Ads y otros canales de adquisición.</div></div>
-        <div class="gloss-item"><div class="gloss-term">New Mktg Paid Complete Tutors</div><div class="gloss-def">Tutores con perfil completo captados por marketing pagado que realizaron al menos una compra.</div></div>
+        <div class="gloss-item"><div class="gloss-term">New customers</div><div class="gloss-def">Tutores con perfil completo captados por marketing pagado que realizaron al menos una compra.</div></div>
         <div class="gloss-item"><div class="gloss-term">New Mktg Paid Tutors Paid</div><div class="gloss-def">Tutores captados por marketing de pago que compraron un producto en el mes.</div></div>
       </div>
     </div>
@@ -1142,7 +1142,8 @@ function renderMarket(m){
     (g('griv')!=null?card('G.Adds revividos',g('griv'),p('griv'),1):'') +
     card('Churn',g('churn'),p('churn'))+
     card('Churn%',g('churnpct'),p('churnpct'),1,'%',true)+
-    (g('mau')!=null?card('Active tutors MAU',g('mau'),p('mau')):'');
+    (g('mau')!=null?card('Active tutors MAU',g('mau'),p('mau')):'') +
+    card('New customers',g('mktg_paid_comp'),p('mktg_paid_comp'));
 
   // Revenue chart — all 16 months, highlight selected
   dc(m+'-c-rev');
@@ -1206,7 +1207,7 @@ function renderMarket(m){
     card('Blended CAC',g('blend'),p('blend'),2,'€',true)+
     (g('spend_gads')!=null?card('Spend G.Ads',g('spend_gads'),p('spend_gads'),0,'€'):'') +
     card('Spend Other Acq',g('spend_other'),p('spend_other'),0,'€')+
-    card('New Mktg Paid Complete Tutors',g('mktg_paid_comp'),p('mktg_paid_comp'))+
+    card('New customers',g('mktg_paid_comp'),p('mktg_paid_comp'))+
     card('New Mktg Paid Tutors Paid',g('mktg_paid_cust'),p('mktg_paid_cust'));
 
   // CAC chart — all 16 months, highlight selected
